@@ -2,18 +2,15 @@ const userData = require('../models/user.model')
 
 exports.findUser = async function (email) {
   let isTrue = false;
-  try{
-  	const user = await userData.findOne({email: email})
-    if(user){
-      isTrue = true
-    }
-    return{
-      userExist: Object.keys(isTrue).length === false
-      user: user
-    }
+  let userID;
+	const user = await userData.findOne({email: email})
+  if(user){
+    isTrue = true
+    userID = user.id
   }
-  catch(err){
-  	next({err})
+  return{
+    userID,
+    userExist: isTrue == true,
   }
 }
 

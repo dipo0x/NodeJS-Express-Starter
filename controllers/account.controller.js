@@ -18,8 +18,7 @@ module.exports.register = async function(req, res, next) {
     password = password.trim()
     const newPassword = await bcryptjs.hash(password, 10)
     const { errors, valid } = signup(email, password);
-    const { userExist, user } = findUser(email)
-
+    const { userID, userExist } = await findUser(email)
     if(userExist == true){
     	next(ApiError.badUserRequest("Email exists")) 
     }
@@ -30,10 +29,10 @@ module.exports.register = async function(req, res, next) {
       else{
         createUser(email, newPassword);
         const otp = Math.floor(100000 + Math.random() * 900000)
-        createRedisOTP(user.id, otp)
+        createRedisOTP(userID, otp)
         OTPSender(email, otp)
 
-        const accessToken = jwt.sign({_id: user.id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+        const accessToken = jwt.sign({_id: userID}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
 
         return Response.send(
           res,

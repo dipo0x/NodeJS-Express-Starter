@@ -4,8 +4,8 @@ const path = require('path')
 require('dotenv').config()
 
 const transporter = nodemailer.createTransport({
-    host: "mail.privateemail.com",
-    port: 465,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     secure: true,
     auth: {
         user: process.env.ADMIN_EMAIL,
@@ -13,16 +13,16 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-module.exports.OTPSender = (theEmail, theToken)=>{
-    const handlebarOptions = {
-        viewEngine: {
-            partialsDir: path.resolve('./emails/'),
-            defaultLayout: false,
-        },
-        viewPath: path.resolve('./emails/'),
-    };
-    transporter.use('compile', hbs(handlebarOptions))
+const handlebarOptions = {
+    viewEngine: {
+        partialsDir: path.resolve('./templates/'),
+        defaultLayout: false,
+    },
+    viewPath: path.resolve('./templates/'),
+};
+transporter.use('compile', hbs(handlebarOptions))
 
+module.exports.OTPSender = (theEmail, theToken)=>{
     var mailOptions = {
         from: `"Oladipo Team" <${process.env.ADMIN_EMAIL}>`,
         to: theEmail,
@@ -39,13 +39,6 @@ module.exports.OTPSender = (theEmail, theToken)=>{
 }
 
 module.exports.errorNotifier = (theEmail, errorStack)=>{
-    const handlebarOptions = {
-        viewEngine: {
-            partialsDir: path.resolve('./emails/'),
-            defaultLayout: false,
-        },
-        viewPath: path.resolve('./emails/'),
-    };
     transporter.use('compile', hbs(handlebarOptions))
     var mailOptions = {
         from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
@@ -64,14 +57,6 @@ module.exports.errorNotifier = (theEmail, errorStack)=>{
 }
 
 module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
-    const handlebarOptions = {
-        viewEngine: {
-            partialsDir: path.resolve('./emails/'),
-            defaultLayout: false,
-        },
-        viewPath: path.resolve('./emails/'),
-    };
-    transporter.use('compile', hbs(handlebarOptions))
     var mailOptions = {
         from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
         to: theEmail,
@@ -89,14 +74,6 @@ module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
 }
 
 module.exports.newPassWordNotifier = (theEmail)=>{
-    const handlebarOptions = {
-        viewEngine: {
-            partialsDir: path.resolve('./emails/'),
-            defaultLayout: false,
-        },
-        viewPath: path.resolve('./emails/'),
-    };
-    transporter.use('compile', hbs(handlebarOptions))
     var mailOptions = {
         from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
         to: theEmail,
