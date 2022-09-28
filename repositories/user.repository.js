@@ -9,6 +9,7 @@ exports.findUser = async function (email) {
     }
     return{
       userExist: Object.keys(isTrue).length === false
+      user: user
     }
   }
   catch(err){
@@ -16,11 +17,11 @@ exports.findUser = async function (email) {
   }
 }
 
-exports.createUser = async function (email, password) {
+exports.createUser = function (email, password) {
   try{
     const user = new userData();
     user.email = email
-    user.password = password,
+    user.password = password
     user.verification = {
       verified: false,
     }

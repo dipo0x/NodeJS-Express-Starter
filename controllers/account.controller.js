@@ -7,8 +7,9 @@ const { OTPSender, resetPasswordEmailSender, newPassWordNotifier } = require('..
 const { signup, reset_password_validator } = require('../utils/validators')
 const { client } = require('../config/redis.config')
 const { findUser, createUser } = require('../repositories/user.repository')
+const { createRedisOTP } = require('../repositories/redis.repository')
 
-REDIS_EXPIRATION_TIME = 900
+const REDIS_EXPIRATION_TIME = 900
     
 module.exports.register = async function(req, res, next) {
   try{
@@ -17,7 +18,7 @@ module.exports.register = async function(req, res, next) {
     password = password.trim()
     const newPassword = await bcryptjs.hash(password, 10)
     const { errors, valid } = signup(email, password);
-    const { userExist } = findUser(email)
+    const { userExist, user } = findUser(email)
 
     if(userExist == true){
     	next(ApiError.badUserRequest("Email exists")) 
@@ -28,11 +29,8 @@ module.exports.register = async function(req, res, next) {
       }
       else{
         createUser(email, newPassword);
-
         const otp = Math.floor(100000 + Math.random() * 900000)
-        const userRedisOTP = user.id + otp;                
-        await client.set(userRedisOTP, otp);
-        client.expire(userRedisOTP, REDIS_EXPIRATION_TIME);
+        createRedisOTP(user.id, otp)
         OTPSender(email, otp)
 
         const accessToken = jwt.sign({_id: user.id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
