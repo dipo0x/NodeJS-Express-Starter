@@ -6,6 +6,7 @@ const Response = require('../utils/response.handler')
 const { OTPSender, resetPasswordEmailSender, newPassWordNotifier } = require('../services/emailSender')
 const { signup, reset_password_validator } = require('../utils/validators')
 const { client } = require('../config/redis.config')
+const { findUser, createUser } = require('../repositories/user.repository')
 
 REDIS_EXPIRATION_TIME = 900
     
@@ -16,27 +17,17 @@ module.exports.register = async function(req, res, next) {
     password = password.trim()
     const newPassword = await bcryptjs.hash(password, 10)
     const { errors, valid } = signup(email, password);
+    const { userExist } = findUser(email)
 
-    const user = await userData.findOne({email: email})
-    if(user !== null){
+    if(userExist == true){
     	next(ApiError.badUserRequest("Email exists")) 
     }
     else{
       if(!valid){
-        return Response.send(
-            res,
-            408,
-            next(ApiError.badUserRequest(errors.error))
-          )
+        next(ApiError.badUserRequest(errors.error))
       }
       else{
-        const user = new userData();
-        user.email = email
-        user.password = newPassword,
-        user.verification = {
-          verified: false,
-        }
-        user.save()
+        createUser(email, newPassword);
 
         const otp = Math.floor(100000 + Math.random() * 900000)
         const userRedisOTP = user.id + otp;                
@@ -73,8 +64,7 @@ module.exports.otp = async function(req, res, next) {
     if(attemptInfo || !otpData){
       const lockInfo = await client.get(userLockAccount)
       if(lockInfo){
-        next(ApiError.badUserRequest('Your login is still temporarily restricted. Check back soon')) ///THE TYPE OF ERROR YOU WANT TO PASS. 
-        //CHECK ERROR/API ERROR TO SEE ALL THE ERRORS AVAILABLE.
+        next(ApiError.badUserRequest('Your login is still temporarily restricted. Check back soon'))
       }
       else{
         if(attemptInfo == 4){
@@ -117,8 +107,8 @@ module.exports.otp = async function(req, res, next) {
 module.exports.login = async function(req, res, next) {
   try{
     const { email, password } = req.body
-    const user = await userData.findOne({email: email})
-    if(user){
+    const { userExist } = findUser(email)
+    if(userExist){
       userData.comparePassword(password, user.password, async (err, isMatch)=>{
         if(!isMatch){
           const userLoginAttempts = `${user.id}attempts`
@@ -194,8 +184,8 @@ module.exports.login = async function(req, res, next) {
 module.exports.reset_password = async function(req, res, next) {
   try{
     const { email } = req.body
-    const user = await userData.findOne({email: email})
-    if(user){
+    const { userExist } = findUser(email)
+    if(userExist){
 
       const otp = Math.floor(100000 + Math.random() * 900000)
       const userRedisOTP = user.id + otp;                

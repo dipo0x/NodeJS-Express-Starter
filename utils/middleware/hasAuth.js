@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
-const userData = require('../models/user.model')
-const ApiError = require('../error/ApiError')
+const userData = require('./../../models/user.model')
+const ApiError = require('./../../error/ApiError')
 
 exports.hasAuth = async function(req, res, next){
     try{
