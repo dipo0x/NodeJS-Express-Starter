@@ -13,3 +13,12 @@ exports.createRedisOTP = async function (userID, otp) {
     next({err})
   }
 }
+
+exports.deleteRedisKey = async function (redisKey) {
+  try{
+    await client.del(redisKey)
+  }
+  catch(err){
+    next({err})
+  }
+}

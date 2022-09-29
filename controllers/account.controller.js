@@ -7,7 +7,7 @@ const { OTPSender, resetPasswordEmailSender, newPassWordNotifier } = require('..
 const { signup, reset_password_validator } = require('../utils/validators')
 const { client } = require('../config/redis.config')
 const { findUser, createUser } = require('../repositories/user.repository')
-const { createRedisOTP } = require('../repositories/redis.repository')
+const { createRedisOTP, deleteRedisKey } = require('../repositories/redis.repository')
 
 const REDIS_EXPIRATION_TIME = 900
     
@@ -181,17 +181,14 @@ module.exports.login = async function(req, res, next) {
 module.exports.reset_password = async function(req, res, next) {
   try{
     const { email } = req.body
-    const { userExist } = findUser(email)
-    if(userExist){
+    const { userID, userExist } = await findUser(email)
+    if(userExist == true){
 
-      const otp = Math.floor(100000 + Math.random() * 900000)
-      const userRedisOTP = user.id + otp;                
-
-      await client.set(userRedisOTP, otp);
-      client.expire(userRedisOTP, REDIS_EXPIRATION_TIME);
+      const otp = Math.floor(100000 + Math.random() * 900000)        
+      createRedisOTP(userID, otp)
       resetPasswordEmailSender(email, otp)
 
-      const accessToken = jwt.sign({_id: user.id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+      const accessToken = jwt.sign({_id: userID}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
 
       return Response.send(
         res,
@@ -215,7 +212,7 @@ module.exports.reset_password_otp = async function(req, res, next) {
     const { otp } = req.body
     const otpData = await client.get(req.user.id+otp)
     if(otpData){
-      await client.del(req.user.id+otp)
+      deleteRedisKey(req.user.id+otp)
       return Response.send(
         res,
         200,
