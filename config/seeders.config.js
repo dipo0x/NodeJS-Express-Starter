@@ -1,0 +1,20 @@
+require('dotenv').config()
+
+const PORT = process.env.PORT
+
+const MONGO_URI = process.env.MONGO_URI
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+
+const REDIS_ENDPOINT_URI = process.env.REDIS_ENDPOINT_URI
+const REDIS_PORT = process.env.REDIS_PORT
+const REDIS_USERNAME = process.env.REDIS_USERNAME
+const REDIS_PASSWORD  = process.env.REDIS_PASSWORD
+
+const EMAIL_HOST = process.env.EMAIL_HOST
+const EMAIL_PORT = process.env.EMAIL_PORT
+
+const SERVER_ADMIN_EMAIL = process.env.SERVER_ADMIN_EMAIL
+
+module.exports = { PORT, MONGO_URI, ADMIN_EMAIL, ADMIN_PASSWORD, REDIS_ENDPOINT_URI, REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD, EMAIL_HOST, EMAIL_PORT, SERVER_ADMIN_EMAIL}

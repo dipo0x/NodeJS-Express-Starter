@@ -4,7 +4,7 @@
   "author": "Oladipo Adesiyan",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "@admin-bro/express": "^3.1.0",

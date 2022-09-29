@@ -10,8 +10,8 @@ var cors = require('cors')
 const adminBroExpress = require('@admin-bro/express')
 const adminBroMongoose = require('@admin-bro/mongoose')
 var { database } = require('./config/mongodb.config')
+const seeders = require('./config/seeders.config')
 const User = require('./models/user.model')
-require('dotenv').config()
 
 var app = express();
 
@@ -49,7 +49,7 @@ app.use(function (err, req, res, next) {
 	return res.status(500).json("Something went wrong")
 });
 
-var port = process.env.PORT
+var port = seeders.PORT
 var server = http.createServer(app);
 server.listen(port, (err) => {
   if (err) { console.log(err)}

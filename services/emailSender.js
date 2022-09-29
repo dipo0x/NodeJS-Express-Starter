@@ -1,15 +1,15 @@
 const hbs = require('nodemailer-express-handlebars')
 const nodemailer = require('nodemailer')
 const path = require('path')
-require('dotenv').config()
+const seeders = require('../config/seeders.config')
 
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    host: seeders.EMAIL_HOST,
+    port: seeders.EMAIL_PORT,
     secure: true,
     auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_PASSWORD
+        user: seeders.ADMIN_EMAIL,
+        pass: seeders.ADMIN_PASSWORD
     }
 });
 
@@ -24,7 +24,7 @@ transporter.use('compile', hbs(handlebarOptions))
 
 module.exports.OTPSender = (theEmail, theToken)=>{
     var mailOptions = {
-        from: `"Oladipo Team" <${process.env.ADMIN_EMAIL}>`,
+        from: `"Oladipo Team" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Boilerplate Login OTP",
         template: 'otp',
@@ -41,7 +41,7 @@ module.exports.OTPSender = (theEmail, theToken)=>{
 module.exports.errorNotifier = (theEmail, errorStack)=>{
     transporter.use('compile', hbs(handlebarOptions))
     var mailOptions = {
-        from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
+        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Urgent: Boilerplate Server Error",
         template: 'serverError',
@@ -58,7 +58,7 @@ module.exports.errorNotifier = (theEmail, errorStack)=>{
 
 module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
     var mailOptions = {
-        from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
+        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Reset Password OTP",
         template: 'resetPasswordOTP',
@@ -75,7 +75,7 @@ module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
 
 module.exports.newPassWordNotifier = (theEmail)=>{
     var mailOptions = {
-        from: `"Boiler Team" <${process.env.ADMIN_EMAIL}>`,
+        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Your password was changed",
         template: 'newPassWordNotifier',

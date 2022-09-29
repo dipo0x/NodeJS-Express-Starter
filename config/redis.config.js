@@ -1,10 +1,11 @@
 const Redis = require("ioredis");
+const seeders = require('./seeders.config')
 
 const client = new Redis({
-    host: process.env.REDIS_ENDPOINT_URI,
-    username: process.env.REDIS_USERNAME,
-    password: process.env.REDIS_PASSWORD,
-    port: process.env.REDIS_PORT,   
+    host: seeders.REDIS_ENDPOINT_URI,
+    username: seeders.REDIS_USERNAME,
+    password: seeders.REDIS_PASSWORD,
+    port: seeders.REDIS_PORT,   
 });
 
 try{

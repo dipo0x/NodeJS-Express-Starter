@@ -3,6 +3,7 @@ const userData = require('../models/user.model')
 const ApiError = require('../error/ApiError')
 const jwt = require('jsonwebtoken')
 const Response = require('../utils/response.handler')
+const seeders = require('../config/seeders.config')
 const { OTPSender, resetPasswordEmailSender, newPassWordNotifier } = require('../services/emailSender')
 const { signup, reset_password_validator } = require('../utils/validators')
 const { client } = require('../config/redis.config')
@@ -32,7 +33,7 @@ module.exports.register = async function(req, res, next) {
         createRedisOTP(userID, otp)
         OTPSender(email, otp)
 
-        const accessToken = jwt.sign({_id: userID}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+        const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
 
         return Response.send(
           res,
@@ -139,8 +140,8 @@ module.exports.login = async function(req, res, next) {
           }
         }
         else{
-          const accessToken = jwt.sign({_id: user.id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
-          const theUser = await jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET )
+          const accessToken = jwt.sign({_id: user.id}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+          const theUser = await jwt.verify(accessToken, seeders.ACCESS_TOKEN_SECRET )
           const theId = theUser._id
           req.user = await userData.findById({_id: theId})
 
@@ -188,7 +189,7 @@ module.exports.reset_password = async function(req, res, next) {
       createRedisOTP(userID, otp)
       resetPasswordEmailSender(email, otp)
 
-      const accessToken = jwt.sign({_id: userID}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+      const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
 
       return Response.send(
         res,

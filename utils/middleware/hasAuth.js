@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const userData = require('./../../models/user.model')
 const ApiError = require('./../../error/ApiError')
+const seeders = require('./../../config/seeders.config')
 
 exports.hasAuth = async function(req, res, next){
     try{
@@ -13,7 +14,7 @@ exports.hasAuth = async function(req, res, next){
                 next(ApiError.badRequest("Invalid Authorization")) 
             }
             else{
-               jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async(err, user) => {
+               jwt.verify(token, seeders.ACCESS_TOKEN_SECRET, async(err, user) => {
                     if(err){
                         next(ApiError.badUserRequest('Login to continue')) 
                     }
