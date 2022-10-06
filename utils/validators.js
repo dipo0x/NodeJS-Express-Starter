@@ -39,7 +39,7 @@ module.exports.reset_password_validator = (password) => {
 	}
 }
 
-module.exports.create_post = (title, body) => {
+module.exports.create_post_validator = (title, body) => {
 	const errors = {};
 	if(title === ''){
 		errors["error"] = "Title cannot be blank"
