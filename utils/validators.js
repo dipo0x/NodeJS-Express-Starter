@@ -14,7 +14,7 @@ module.exports.signup = (email, password) => {
 	if(!validator.isAscii(password)){
 		errors["error"] = "Not a valid password";	
 		}
-	if(!validator.isLength(password, {min:4, max: 20})){
+	if(!validator.isLength(password, { min:4, max: 20 })){
 		errors["error"] = "Ensure that your password has a minimum of 4 characters and maximum of 20 characters";	
 	}
     return{
@@ -32,6 +32,20 @@ module.exports.reset_password_validator = (password) => {
 		}
 	if(!validator.isLength(password, {min:4, max: 20})){
 		errors["password"] = "Ensure that your password has a minimum of 4 characters and maximum of 20 characters";	
+	}
+	return{
+		errors,
+		valid: Object.keys(errors).length < 1
+	}
+}
+
+module.exports.create_post = (title, body) => {
+	const errors = {};
+	if(title === ''){
+		errors["error"] = "Title cannot be blank"
+	}
+	if(!validator.isLength(title, {min:4, max: 35})){
+		errors["error"] = "Ensure that your title has a minimum of 4 characters and maximum of 35 characters";	
 	}
 	return{
 		errors,

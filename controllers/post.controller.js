@@ -1,9 +1,10 @@
 const ApiError = require('../error/ApiError')
 
-exports.home = async function (req, res, next) {
+exports.create_post = async function (req, res, next) {
   try{
-  	const info = req.body.info
-  	if(!info){
+    const title = req.body.title
+  	const body = req.body.body
+  	if(!title || !body ){
   		next(ApiError.badUserRequest("You didn't input your info"))
   	}
   	else{

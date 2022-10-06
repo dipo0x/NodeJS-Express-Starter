@@ -26,6 +26,7 @@
     "nodemailer": "^6.7.8",
     "nodemailer-express-handlebars": "^5.0.0",
     "nodemon": "^2.0.20",
+    "pino": "^8.6.1",
     "toobusy-js": "^0.5.1",
     "tslib": "^2.4.0",
     "validator": "^13.7.0",

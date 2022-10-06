@@ -3,7 +3,7 @@ var toobusy_js = require("toobusy-js");
 const http = require('http')
 var apiErrorHandler = require('./error/ApiErrorHandler')
 var apiError = require('./error/ApiError')
-var indexRouter = require('./routes/index.route.js');
+var postRouter = require('./routes/post.route.js');
 var accountRouter = require('./routes/account.route.js');
 const AdminBro = require('admin-bro')
 var cors = require('cors')
@@ -36,7 +36,7 @@ if(toobusy_js){
 	apiError.badRequest("Server is busy.")
 }
 
-app.use('/', indexRouter);
+app.use('/post', postRouter);
 app.use('/account', accountRouter);
 app.use(adminBro.options.rootPath, adminRouter)
 app.use(apiErrorHandler)

@@ -33,7 +33,7 @@ module.exports.register = async function(req, res, next) {
         createRedisOTP(userID, otp)
         OTPSender(email, otp)
 
-        const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+        const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: seeders.JWT_EXPIRY_TIME  })
 
         return Response.send(
           res,

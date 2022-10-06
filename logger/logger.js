@@ -4,7 +4,7 @@ const Mask = require("./mask");
 const level = process.env.NODE_LOGGING_LEVEL || "info";
 
 const log = bunyan.createLogger({
-  name: "myapp",
+  name: "boilerPlate",
   streams: [
     {
       level,
