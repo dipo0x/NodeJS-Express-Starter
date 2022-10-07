@@ -19,10 +19,8 @@ npm start
 
 ## Usage
 
-Make a Reference to [the Postman Collection](https://fastupload.io/en/EbHX2LETIbpl1IX/file) to see the Environment Variables and Requests
+Make a Reference to [the Postman Collection](https://fastupload.io/en/25axvSwV5FvMhrf/file) to see the Environment Variables and Requests
 
-## Test
-Psalm 91
 ## Stack Choice
 
 MongoDB - It lets the application run while it is fetching data from the backend server which won't make our large users always wait for response. It is asynchronous and event-driven. Schema doesn't have to be well structured, which makes it perfect for frequently changing data. MongoDB is also a distributed database which allows ad-hoc queries, real-time integration, and indexing efficient.

@@ -4,7 +4,8 @@
   "author": "Oladipo Adesiyan",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "integration-tests": "mocha --exit tests/integration-tests.js"
   },
   "dependencies": {
     "@admin-bro/express": "^3.1.0",
@@ -12,7 +13,10 @@
     "admin-bro": "^4.0.1",
     "bcryptjs": "^2.4.3",
     "bunyan": "^1.8.15",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "dotenv": "^16.0.2",
     "express": "~4.16.1",
