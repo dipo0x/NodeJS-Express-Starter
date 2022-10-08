@@ -79,9 +79,9 @@ describe('Boilerplate CRUD API - Integration tests', () => {
 
     describe("DELETE /post/delete/:slug", () => {
         it("It should DELETE an existing post", (done) => {
-            const storyId = "c1131425dd1549ffc28c9dc9"; 
+            const postId = "c1131425dd1549ffc28c9dc9"; 
             chai.request(app)                
-                .delete("/post/delete-post/" + storyId)
+                .delete("/post/delete-post/" + postId)
                 .end((err, response) => {
                     response.should.have.status(200);
                     response.body.should.be.a('object');
@@ -90,10 +90,10 @@ describe('Boilerplate CRUD API - Integration tests', () => {
             });
         });
 
-        it("It should NOT DELETE a story that is not in the database", (done) => {
-            const storyId = "1234567"; 
+        it("It should NOT DELETE a post that is not in the database", (done) => {
+            const postId = "1234567"; 
             chai.request(app)                
-                .delete("/post/delete-post/" + storyId)
+                .delete("/post/delete-post/" + postId)
                 .end((err, response) => {
                     response.should.have.status(409);
                 done();
