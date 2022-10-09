@@ -5,8 +5,37 @@ const app = require('../app');
 chai.should();
 chai.use(chaiHttp);
 
-describe('Boilerplate CRUD API - Integration tests', () => {
-    
+describe('Boilerplate API - Account and CRUD Integration tests', () => {
+    describe("Post /account/register", () => {
+        it("It should POST a new user", (done) => {
+            const user = {
+                user: "tester",
+                password: "tester1234"
+            }
+            chai.request(app)
+                .post("/account/register")
+                .send(post)
+                .end((err, response) => {
+                    response.should.have.status(200);
+                    response.body.should.be.a('object');   
+                done();
+            });
+        });
+        it("It should NOT POST a new user that failed validation", (done) => {
+            const user = {
+                user: "tester",
+                password: ""
+            }
+            chai.request(app)
+                .post("/account/register")
+                .send(post)
+                .end((err, response) => {
+                    response.should.have.status(409);
+                done();
+            });
+        });
+    });
+  
     describe("GET /post/all-posts", () => {
         it("It should GET all the posts", (done) => {
             chai.request(app)
@@ -39,8 +68,7 @@ describe('Boilerplate CRUD API - Integration tests', () => {
             });
         });
     });
-
-     
+   
     describe("PUT /post/edit-post/:slug", () => {
         it("It should PUT an existing story", (done) => {
 
