@@ -4,6 +4,7 @@ const ApiError = require('../error/ApiError')
 const jwt = require('jsonwebtoken')
 const Response = require('../utils/response.handler')
 const seeders = require('../config/seeders.config')
+const userOtp = require('../utils/otpGetter')
 const { OTPSender, resetPasswordEmailSender, newPassWordNotifier } = require('../services/emailSender')
 const { signup, reset_password_validator } = require('../utils/validators')
 const { client } = require('../config/redis.config')
@@ -29,7 +30,7 @@ module.exports.register = async function(req, res, next) {
       }
       else{
         createUser(email, newPassword);
-        const otp = Math.floor(100000 + Math.random() * 900000)
+        const otp = userOtp
         createRedisOTP(userID, otp)
         OTPSender(email, otp)
 
@@ -146,7 +147,7 @@ module.exports.login = async function(req, res, next) {
           req.user = await userData.findById({_id: theId})
 
           if(user['verification'].verified == false){
-            const otp = Math.floor(100000 + Math.random() * 900000)
+            const otp = userOtp
             const userRedisOTP = user.id + otp;                
             await client.set(userRedisOTP, otp);
             client.expire(userRedisOTP, REDIS_EXPIRATION_TIME);
@@ -185,7 +186,7 @@ module.exports.reset_password = async function(req, res, next) {
     const { userID, userExist } = await findUser(email)
     if(userExist == true){
 
-      const otp = Math.floor(100000 + Math.random() * 900000)        
+      const otp = userOtp 
       createRedisOTP(userID, otp)
       resetPasswordEmailSender(email, otp)
 
