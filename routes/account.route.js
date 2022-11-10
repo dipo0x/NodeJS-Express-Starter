@@ -1,6 +1,6 @@
 const express = require('express');
 const controller = require('../controllers/account.controller.js')
-const { hasAuth } = require('../utils/middleware/hasAuth')
+const hasAuth = require('../utils/middleware/hasAuth')
 const router = express.Router();
 
 router.post('/register', controller.register)

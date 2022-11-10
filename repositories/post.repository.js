@@ -12,6 +12,7 @@ exports.createPost = async function (title, body) {
     post.body = body
     post.slug = crypto.randomBytes(12).toString('hex')
     post.save()
+    return post
 }
 
 exports.checkPost = async function (title, body) {
@@ -43,8 +44,10 @@ exports.editPost = async function (title, body, slug) {
     post.title = title || null
     post.body = body || null
     post.save()
+    return post
 }
 
 exports.deletePost = async function (slug) {
     await postData.findOneAndDelete({slug: slug})
+    return "Post successfully deleted!"
 }

@@ -26,11 +26,11 @@ module.exports.create_post = async function(req, res, next) {
         next(ApiError.badUserRequest("Post with same content exists already!"))
       }
       else{
-        createPost(title, body)
+        const post = createPost(title, body)
         return Response.send(
           res,
           200,
-          "You have successfully created a post"
+          post
         )
       }
     }
@@ -55,11 +55,11 @@ module.exports.edit_post = async function(req, res, next) {
         next(ApiError.badUserRequest("Post does not exist!"))
       }
       else{
-        editPost(title, body, slug)
+        const post = editPost(title, body, slug)
         return Response.send(
           res,
           200,
-          "You have successfully edited the post"
+          post
         )
       }
     }
@@ -77,11 +77,11 @@ module.exports.delete_post = async function(req, res, next){
         next(ApiError.badUserRequest("Post does not exist!"))
       }
       else{
-        deletePost(slug)
+        const data = deletePost(slug)
         return Response.send(
           res,
           200,
-          "Post successfully deleted!"
+          data
         )
       }
   }

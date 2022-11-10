@@ -3,7 +3,7 @@ const userData = require('./../../models/user.model')
 const ApiError = require('./../../error/ApiError')
 const seeders = require('./../../config/seeders.config')
 
-exports.hasAuth = async function(req, res, next){
+module.exports = async function(req, res, next){
     try{
         if(!req.headers.authorization){
             next(ApiError.badRequest("No Authorization")) 
