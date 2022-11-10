@@ -24,7 +24,7 @@ transporter.use('compile', hbs(handlebarOptions))
 
 module.exports.OTPSender = (theEmail, theToken)=>{
     var mailOptions = {
-        from: `"Oladipo Team" <${seeders.ADMIN_EMAIL}>`,
+        from: `"${seeders.SERVER_NAME}" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Boilerplate Login OTP",
         template: 'otp',
@@ -41,7 +41,7 @@ module.exports.OTPSender = (theEmail, theToken)=>{
 module.exports.errorNotifier = (theEmail, errorStack)=>{
     transporter.use('compile', hbs(handlebarOptions))
     var mailOptions = {
-        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
+        from: `"${seeders.SERVER_NAME}" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Urgent: Boilerplate Server Error",
         template: 'serverError',
@@ -58,7 +58,7 @@ module.exports.errorNotifier = (theEmail, errorStack)=>{
 
 module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
     var mailOptions = {
-        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
+        from: `"${seeders.SERVER_NAME}" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Reset Password OTP",
         template: 'resetPasswordOTP',
@@ -75,7 +75,7 @@ module.exports.resetPasswordEmailSender = (theEmail, theToken)=>{
 
 module.exports.newPassWordNotifier = (theEmail)=>{
     var mailOptions = {
-        from: `"Boiler Team" <${seeders.ADMIN_EMAIL}>`,
+        from: `"${seeders.SERVER_NAME}" <${seeders.ADMIN_EMAIL}>`,
         to: theEmail,
         subject: "Your password was changed",
         template: 'newPassWordNotifier',

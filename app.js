@@ -1,6 +1,5 @@
 var express = require('express');
 var toobusy_js = require("toobusy-js");
-const http = require('http')
 var apiErrorHandler = require('./error/ApiErrorHandler')
 var apiError = require('./error/ApiError')
 var postRouter = require('./routes/post.route.js');
@@ -12,6 +11,7 @@ const adminBroMongoose = require('@admin-bro/mongoose')
 var { database } = require('./config/mongodb.config')
 const seeders = require('./config/seeders.config')
 const User = require('./models/user.model')
+const server = require('./server')
 
 var app = express();
 
@@ -49,13 +49,6 @@ app.use(function (err, req, res, next) {
 	return res.status(500).json("Something went wrong")
 });
 
-var port = seeders.PORT
-var server = http.createServer(app);
-server.listen(port, (err) => {
-  if (err) { console.log(err)}
-  else {
-    console.log(`Server is running on port ${port}`)
-  }
-});
+server()
 
 module.exports = app;

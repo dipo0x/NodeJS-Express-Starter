@@ -1,11 +1,12 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
+const seeders = require('./seeders.config')
 
 chai.should();
 chai.use(chaiHttp);
 
-describe('Boilerplate API - Account and CRUD Integration tests', () => {
+describe(`${seeders.SERVER_NAME} - Account and CRUD Integration tests`, () => {
     describe("Post /account/register", () => {
         it("It should POST a new user", (done) => {
             const user = {

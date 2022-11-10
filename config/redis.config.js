@@ -15,4 +15,4 @@ try{
 }
 catch(err){}
 
-module.exports= { client }
+module.exports = { client }

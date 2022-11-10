@@ -22,6 +22,7 @@ module.exports.signup = (email, password) => {
         valid: Object.keys(errors).length < 1
     }
 }
+
 module.exports.reset_password_validator = (password) => {
 	const errors = {};
 	if(password === ''){
