@@ -19,33 +19,27 @@ module.exports.register = async function(req, res, next) {
     email = email.trim()
     password = password.trim()
     const newPassword = await bcryptjs.hash(password, 10)
-    const { errors, valid } = signup(email, password);
-    const { userID, userExist } = await findUser(email)
-    if(userExist == true){
-    	next(ApiError.badUserRequest("Email exists")) 
+    const { errors, valid } = signup(email, password);  
+    if(!valid){
+      next(ApiError.badUserRequest(errors.error))
     }
     else{
-      if(!valid){
-        next(ApiError.badUserRequest(errors.error))
-      }
-      else{
-        createUser(email, newPassword);
-        const otp = userOtp
-        createRedisOTP(userID, otp)
-        OTPSender(email, otp)
+      createUser(email, newPassword);
+      const otp = userOtp
+      createRedisOTP(userID, otp)
+      OTPSender(email, otp)
 
-        const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: seeders.JWT_EXPIRY_TIME  })
+      const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: seeders.JWT_EXPIRY_TIME  })
 
-        return Response.send(
-          res,
-          200,
-          {
-          	token: accessToken,
-          	message: "Sign up successful. Please input the OTP sent to your mail"
-          }
-        )
-      }
-    }
+      return Response.send(
+        res,
+        200,
+        {
+        	token: accessToken,
+        	message: "Sign up successful. Please input the OTP sent to your mail"
+        }
+      )
+    }   
   }
   catch(err){
     next({err})
@@ -106,74 +100,69 @@ module.exports.otp = async function(req, res, next) {
 module.exports.login = async function(req, res, next) {
   try{
     const { email, password } = req.body
-    const { userExist } = findUser(email)
-    if(userExist){
-      userData.comparePassword(password, user.password, async (err, isMatch)=>{
-        if(!isMatch){
-          const userLoginAttempts = `${user.id}attempts`
-          const userLockAccount = `${user.id}lock`
-          const attemptInfo = await client.get(userLoginAttempts)
+    
+    userData.comparePassword(password, user.password, async (err, isMatch)=>{
+      if(!isMatch){
+        const userLoginAttempts = `${user.id}attempts`
+        const userLockAccount = `${user.id}lock`
+        const attemptInfo = await client.get(userLoginAttempts)
 
-          const lockInfo = await client.get(userLockAccount)
-          if(lockInfo){
-            next(ApiError.badUserRequest('Your login is still temporarily restricted. Check back soon')) ///THE TYPE OF ERROR YOU WANT TO PASS. 
-            //CHECK ERROR/API ERROR TO SEE ALL THE ERRORS AVAILABLE.
-          }
-          else{
-            if(attemptInfo == 4){
-              client.set(userLockAccount, user.id);
-              client.expire(userLockAccount, REDIS_EXPIRATION_TIME);
-              next(ApiError.badUserRequest(`Your login is now temporarily restricted anyway. Login to get your code again in 15 minutes, nonsense!.`))
-            }
-            else{
-              if(userLoginAttempts){
-                const newNumber = (Number(attemptInfo)+1)
-                client.set(userLoginAttempts, newNumber)
-                const availableAttempts = 4 - (Number(attemptInfo))
-                next(ApiError.badUserRequest(`Invalid login credentials, you have ${ availableAttempts } attempts left`))
-              }
-              else{
-                client.set(userLoginAttempts, 1);
-                client.expire(userLoginAttempts, REDIS_AUTH_EXPIRATION_TIME);
-                next(ApiError.badUserRequest("Invalid login credentials, you have 3 attempts left"))
-              } 
-            } 
-          }
+        const lockInfo = await client.get(userLockAccount)
+        if(lockInfo){
+          next(ApiError.badUserRequest('Your login is still temporarily restricted. Check back soon')) ///THE TYPE OF ERROR YOU WANT TO PASS. 
+          //CHECK ERROR/API ERROR TO SEE ALL THE ERRORS AVAILABLE.
         }
         else{
-          const accessToken = jwt.sign({_id: user.id}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
-          const theUser = await jwt.verify(accessToken, seeders.ACCESS_TOKEN_SECRET )
-          const theId = theUser._id
-          req.user = await userData.findById({_id: theId})
-
-          if(user['verification'].verified == false){
-            const otp = userOtp
-            const userRedisOTP = user.id + otp;                
-            await client.set(userRedisOTP, otp);
-            client.expire(userRedisOTP, REDIS_EXPIRATION_TIME);
-            OTPSender(email, otp)
-            return Response.send(
-              res,
-              200,
-              {
-                token: accessToken,
-                message: "We just sent you the OTP to activate your account. Input the OTP in the next page"
-              }
-            )
+          if(attemptInfo == 4){
+            client.set(userLockAccount, user.id);
+            client.expire(userLockAccount, REDIS_EXPIRATION_TIME);
+            next(ApiError.badUserRequest(`Your login is now temporarily restricted anyway. Login to get your code again in 15 minutes, nonsense!.`))
           }
           else{
-            return Response.send(
-              res,
-              200,
-              accessToken
-            )
-          }
+            if(userLoginAttempts){
+              const newNumber = (Number(attemptInfo)+1)
+              client.set(userLoginAttempts, newNumber)
+              const availableAttempts = 4 - (Number(attemptInfo))
+              next(ApiError.badUserRequest(`Invalid login credentials, you have ${ availableAttempts } attempts left`))
+            }
+            else{
+              client.set(userLoginAttempts, 1);
+              client.expire(userLoginAttempts, REDIS_AUTH_EXPIRATION_TIME);
+              next(ApiError.badUserRequest("Invalid login credentials, you have 3 attempts left"))
+            } 
+          } 
         }
-      })
-    }
-    else{
-      next(ApiError.badUserRequest('Email not found'))
-    }
+      }
+      else{
+        const accessToken = jwt.sign({_id: user.id}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+        const theUser = await jwt.verify(accessToken, seeders.ACCESS_TOKEN_SECRET )
+        const theId = theUser._id
+        req.user = await userData.findById({_id: theId})
+
+        if(user['verification'].verified == false){
+          const otp = userOtp
+          const userRedisOTP = user.id + otp;                
+          await client.set(userRedisOTP, otp);
+          client.expire(userRedisOTP, REDIS_EXPIRATION_TIME);
+          OTPSender(email, otp)
+          return Response.send(
+            res,
+            200,
+            {
+              token: accessToken,
+              message: "We just sent you the OTP to activate your account. Input the OTP in the next page"
+            }
+          )
+        }
+        else{
+          return Response.send(
+            res,
+            200,
+            accessToken
+          )
+        }
+      }
+    })
   }
   catch(err){
     next({err})
@@ -183,26 +172,21 @@ module.exports.login = async function(req, res, next) {
 module.exports.reset_password = async function(req, res, next) {
   try{
     const { email } = req.body
-    const { userID, userExist } = await findUser(email)
-    if(userExist == true){
+    
+    const otp = userOtp 
+    createRedisOTP(userID, otp)
+    resetPasswordEmailSender(email, otp)
 
-      const otp = userOtp 
-      createRedisOTP(userID, otp)
-      resetPasswordEmailSender(email, otp)
+    const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
 
-      const accessToken = jwt.sign({_id: userID}, seeders.ACCESS_TOKEN_SECRET, { expiresIn: '3h'  })
+    return Response.send(
+      res,
+      {
+        token: accessToken,
+        message: "OTP successfully sent. Check your mail."
+      }
+    )
 
-      return Response.send(
-        res,
-        {
-          token: accessToken,
-          message: "OTP successfully sent. Check your mail."
-        }
-      )
-    }
-    else{
-      next(ApiError.badUserRequest('Email not found'))
-    }
   }
   catch(err){
     next({err})
