@@ -19,7 +19,7 @@
     "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "dotenv": "^16.0.2",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "got": "^12.5.0",
     "http-errors": "~1.6.3",
     "ioredis": "^5.2.3",
