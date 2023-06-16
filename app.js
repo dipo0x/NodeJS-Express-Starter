@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.disable("x-powered-by");
-if(toobusy_js){
+if(toobusy_js()){
 	apiError.badRequest("Server is busy.")
 }
 
